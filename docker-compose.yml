@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # 開発環境
+  app-dev:
+    build:
+      context: .
+      target: dev
+    container_name: select-presenter-dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NODE_ENV=development
+      - NEXT_TELEMETRY_DISABLED=1
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    command: sh -c "npm install && npm run dev"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # 本番環境
+  app-prod:
+    build:
+      context: .
+      target: runner
+    container_name: select-presenter-prod
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    command: ["sh", "-c", "if [ -f server.js ]; then node server.js; else npm start; fi"]
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge 
