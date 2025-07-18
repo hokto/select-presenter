@@ -51,4 +51,4 @@ USER nextjs
 EXPOSE 3000
 
 # デフォルトコマンド（docker-compose.ymlで上書きされる）
-CMD ["npm", "start"] 
+CMD ["npm", "start"]
