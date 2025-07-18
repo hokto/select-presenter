@@ -36,7 +36,7 @@ services:
       - NEXT_TELEMETRY_DISABLED=1
       - PORT=3000
       - HOSTNAME=0.0.0.0
-    command: ["sh", "-c", "if [ -f server.js ]; then node server.js; else npm start; fi"]
+    command: ["npm", "start"]
     networks:
       - app-network
     restart: unless-stopped
