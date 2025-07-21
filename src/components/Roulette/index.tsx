@@ -102,6 +102,7 @@ export const Roulette: React.FC<RouletteProps> = ({ segments, size = 300 }) => {
           transform: `rotate(${angle}deg)`,
           display: 'block',
           margin: '0 auto',
+          pointerEvents: 'none', // ボタンクリックできるように
         }}
       >
         {segments.map((label, i) => {
