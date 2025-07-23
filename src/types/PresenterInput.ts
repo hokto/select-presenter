@@ -1,4 +1,5 @@
 export interface PresenterInputProps {
   presenters: string[];
-  onAddPresenter: (presenter: string) => void;
+  onAddPresenter: (name: string) => void;
+  onRemovePresenters: (names: string[]) => void;
 }

@@ -18,6 +18,11 @@ export default function Home() {
     }
   };
 
+  // 発表者削除
+  const handleRemovePresenters = (names: string[]) => {
+    setPresenters(prev => prev.filter(p => !names.includes(p)));
+  };
+
   // スタートボタン押下時の処理
   const handleStart = () => {
     setIsRunning(true);
@@ -42,7 +47,7 @@ export default function Home() {
     const segAngle = 360 / segs.length;
     const normalized = ((finalAngle % 360) + 360) % 360;
     const winnerIdx =
-      (segs.length - 1 - Math.floor(normalized / segAngle)) % segs.length;
+      (segs.length - 1 - Math.floor(normalized / segAngle)) % segs.length; // 逆順なのでsegs.length - 1から引く
     setWinner(segs[winnerIdx]);
   };
 
@@ -57,6 +62,7 @@ export default function Home() {
       <PresenterInput
         presenters={presenters}
         onAddPresenter={handleAddPresenter}
+        onRemovePresenters={handleRemovePresenters}
       />
       <Roulette
         segments={presenters.length ? presenters : ['---']}

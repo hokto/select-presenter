@@ -4,18 +4,40 @@ import { useState } from 'react';
 const PresenterInput = ({
   presenters,
   onAddPresenter,
+  onRemovePresenters,
 }: PresenterInputProps) => {
   const [presenter, setPresenter] = useState('');
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const [selected, setSelected] = useState<string[]>([]);
+
+  const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
-    onAddPresenter(presenter);
+    if (presenter) {
+      onAddPresenter(presenter);
+      setPresenter('');
+    }
   };
+
+  const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const values = Array.from(e.target.selectedOptions, opt => opt.value);
+    setSelected(values);
+  };
+
+  const handleRemove = () => {
+    if (selected.length > 0) {
+      onRemovePresenters(selected);
+      setSelected([]);
+    }
+  };
+
   return (
     <div>
       <form
         className="flex flex-col gap-4 max-w-md mx-auto"
-        onSubmit={handleSubmit}
+        onSubmit={handleAdd}
       >
+        <label htmlFor="presenter" className="block text-sm font-medium mb-2">
+          Presenter
+        </label>
         <input
           type="text"
           id="presenter"
@@ -26,25 +48,31 @@ const PresenterInput = ({
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-md"
+          className="bg-blue-600 text-white rounded px-4 py-2"
         >
           追加
         </button>
-
-        <label htmlFor="presenter" className="block text-sm font-medium mb-2">
-          Presenter
-        </label>
         <select
-          multiple={true}
-          id="presenter"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          multiple
+          id="presenter-list"
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+          value={selected}
+          onChange={handleSelect}
         >
-          {presenters.map((presenter, i) => (
-            <option key={i} value={presenter}>
-              {presenter}
+          {presenters.map((p, i) => (
+            <option key={i} value={p}>
+              {p}
             </option>
           ))}
         </select>
+        <button
+          type="button"
+          className="bg-red-600 text-white rounded px-4 py-2 mt-2"
+          onClick={handleRemove}
+          disabled={selected.length === 0}
+        >
+          選択した発表者を削除
+        </button>
       </form>
     </div>
   );
