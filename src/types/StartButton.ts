@@ -1,4 +1,4 @@
 export interface StartButtonProps {
   isRunning: boolean;
-  handleStartStop: () => void;
+  onClick: () => void;
 }

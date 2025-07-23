@@ -1,11 +1,14 @@
 import { PresenterInputProps } from '@/types/PresenterInput';
 import { useState } from 'react';
 
-const PresenterInput = ({ presenters, callback }: PresenterInputProps) => {
+const PresenterInput = ({
+  presenters,
+  onAddPresenter,
+}: PresenterInputProps) => {
   const [presenter, setPresenter] = useState('');
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    callback(presenter);
+    onAddPresenter(presenter);
   };
   return (
     <div>

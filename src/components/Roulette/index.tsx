@@ -1,5 +1,6 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+
+import React, { useEffect, useRef } from 'react';
 import { RouletteProps } from '@/types/Roulette';
 
 const COLORS = [
@@ -42,7 +43,6 @@ const describeArc = (
   const start = polarToCartesian(cx, cy, r, endAngle);
   const end = polarToCartesian(cx, cy, r, startAngle);
   const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
-  // 中心点(M)から円周の開始点まで移動(L),指定の場所まで円弧を描き(A),閉じる(Z)
   return [
     `M ${cx} ${cy}`,
     `L ${start.x} ${start.y}`,
@@ -51,44 +51,44 @@ const describeArc = (
   ].join(' ');
 };
 
-export const Roulette: React.FC<RouletteProps> = ({ segments, size = 300 }) => {
+const Roulette: React.FC<RouletteProps> = ({
+  segments,
+  angle,
+  setAngle,
+  isRunning,
+  size = 300,
+  onStop,
+}) => {
   const cx = size / 2;
   const cy = size / 2;
   const r = size / 2 - 10;
   const anglePerSegment = 360 / segments.length;
+  const rafRef = useRef<number | null>(null);
+  const prevIsRunning = useRef(isRunning);
 
-  // SSR対策: angleの初期値をランダムにし、マウント後にだけ描画
-  const [mounted, setMounted] = useState(false);
-  const [angle, setAngle] = useState(() => Math.random() * 360);
-  const requestRef = useRef<number | null>(null);
-
+  // アニメーションループ（一定速度、isRunningがfalseになったら即停止）
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
+    if (!isRunning) return;
     let lastTime = performance.now();
     const animate = (time: number) => {
       const delta = time - lastTime;
       lastTime = time;
-      // 無限に加算されないように，720を閾値にして，360(一周分だけ)だけ戻す
-      setAngle(prev => {
-        const next = prev + delta * 0.2;
-        return next > 720 ? next - 360 : next;
-      });
-      requestRef.current = requestAnimationFrame(animate);
+      setAngle(prev => prev + delta * 0.2);
+      rafRef.current = requestAnimationFrame(animate);
     };
-    requestRef.current = requestAnimationFrame(animate);
+    rafRef.current = requestAnimationFrame(animate);
     return () => {
-      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [mounted]);
+  }, [isRunning, setAngle]);
 
-  // マウント前は何も描画しない
-  if (!mounted) {
-    return null;
-  }
+  // isRunningがfalseになった瞬間にonStopを呼ぶ
+  useEffect(() => {
+    if (prevIsRunning.current && !isRunning && onStop) {
+      onStop(angle);
+    }
+    prevIsRunning.current = isRunning;
+  }, [isRunning, onStop, angle]);
 
   return (
     <div
@@ -102,7 +102,7 @@ export const Roulette: React.FC<RouletteProps> = ({ segments, size = 300 }) => {
           transform: `rotate(${angle}deg)`,
           display: 'block',
           margin: '0 auto',
-          pointerEvents: 'none', // ボタンクリックできるように
+          pointerEvents: 'none',
         }}
       >
         {segments.map((label, i) => {
@@ -140,9 +140,8 @@ export const Roulette: React.FC<RouletteProps> = ({ segments, size = 300 }) => {
           strokeWidth={2}
         />
       </svg>
-      <div style={{ marginTop: 16, color: '#888', fontSize: 14 }}>
-        angle: {angle.toFixed(2)}
-      </div>
     </div>
   );
 };
+
+export default Roulette;
