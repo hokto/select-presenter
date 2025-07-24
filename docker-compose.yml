@@ -23,24 +23,6 @@ services:
       - app-network
     restart: unless-stopped
 
-  # 本番環境
-  app-prod:
-    build:
-      context: .
-      target: runner
-    container_name: select-presenter-prod
-    ports:
-      - "3001:3000"
-    environment:
-      - NODE_ENV=production
-      - NEXT_TELEMETRY_DISABLED=1
-      - PORT=3000
-      - HOSTNAME=0.0.0.0
-    command: ["npm", "start"]
-    networks:
-      - app-network
-    restart: unless-stopped
-
 networks:
   app-network:
     driver: bridge
