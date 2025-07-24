@@ -22,33 +22,9 @@ COPY package.json package-lock.json* ./
 # 開発用のコマンドを設定
 CMD ["npm", "run", "dev"]
 
-# ビルドステージ
+# ビルドステージ（静的エクスポート用）
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-# ビルド実行
 RUN npm run build
-
-# 本番実行ステージ
-FROM base AS runner
-WORKDIR /app
-
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-# 静的ファイルをコピー
-COPY --from=builder /app/public ./public
-
-# Next.js standalone出力をコピー（最適化された本番環境）
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-USER nextjs
-
-EXPOSE 3000
-
-# デフォルトコマンド（docker-compose.ymlで上書きされる）
-CMD ["npm", "start"]
