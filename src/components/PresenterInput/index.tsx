@@ -5,7 +5,12 @@ const PresenterInput = ({
   presenters,
   onAddPresenter,
   onRemovePresenters,
-}: PresenterInputProps) => {
+  speed,
+  onSpeedChange,
+}: PresenterInputProps & {
+  speed: number;
+  onSpeedChange: (v: number) => void;
+}) => {
   const [presenter, setPresenter] = useState('');
   const [selected, setSelected] = useState<string[]>([]);
 
@@ -74,6 +79,24 @@ const PresenterInput = ({
           選択した発表者を削除
         </button>
       </form>
+      <div className="mt-4">
+        <label
+          htmlFor="speed-slider"
+          className="block text-sm font-medium mb-2"
+        >
+          ルーレットスピード: {speed.toFixed(2)}
+        </label>
+        <input
+          id="speed-slider"
+          type="range"
+          min={0.05}
+          max={1}
+          step={0.01}
+          value={speed}
+          onChange={e => onSpeedChange(Number(e.target.value))}
+          className="w-full"
+        />
+      </div>
     </div>
   );
 };

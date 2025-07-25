@@ -51,13 +51,14 @@ const describeArc = (
   ].join(' ');
 };
 
-const Roulette: React.FC<RouletteProps> = ({
+const Roulette: React.FC<RouletteProps & { speed: number }> = ({
   segments,
   angle,
   setAngle,
   isRunning,
   size = 300,
   onStop,
+  speed,
 }) => {
   const cx = size / 2;
   const cy = size / 2;
@@ -73,14 +74,14 @@ const Roulette: React.FC<RouletteProps> = ({
     const animate = (time: number) => {
       const delta = time - lastTime;
       lastTime = time;
-      setAngle(prev => prev + delta * 0.2);
+      setAngle(angle + delta * speed);
       rafRef.current = requestAnimationFrame(animate);
     };
     rafRef.current = requestAnimationFrame(animate);
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [isRunning, setAngle]);
+  }, [isRunning, setAngle, speed, angle]);
 
   // isRunningがfalseになった瞬間にonStopを呼ぶ
   useEffect(() => {
