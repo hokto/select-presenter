@@ -9,6 +9,7 @@ export default function Home() {
   const [isRunning, setIsRunning] = useState(false);
   const [angle, setAngle] = useState(0);
   const [winner, setWinner] = useState<string | null>(null);
+  const [speed, setSpeed] = useState(0.2); // ルーレットのスピード
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // 発表者追加
@@ -63,6 +64,8 @@ export default function Home() {
         presenters={presenters}
         onAddPresenter={handleAddPresenter}
         onRemovePresenters={handleRemovePresenters}
+        speed={speed}
+        onSpeedChange={setSpeed}
       />
       <Roulette
         segments={presenters.length ? presenters : ['---']}
@@ -70,6 +73,7 @@ export default function Home() {
         setAngle={setAngle}
         isRunning={isRunning}
         onStop={handleStop}
+        speed={speed}
       />
       <StartButton isRunning={isRunning} onClick={handleStart} />
     </main>

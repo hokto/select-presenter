@@ -1,8 +1,8 @@
 export interface RouletteProps {
   segments: string[];
   angle: number;
-  setAngle: React.Dispatch<React.SetStateAction<number>>;
+  setAngle: (angle: number) => void;
   isRunning: boolean;
-  size?: number;
-  onStop?: (angle: number) => void;
+  onStop?: (finalAngle: number) => void;
+  speed: number;
 }
