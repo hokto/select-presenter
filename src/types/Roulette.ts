@@ -5,4 +5,5 @@ export interface RouletteProps {
   isRunning: boolean;
   onStop?: (finalAngle: number) => void;
   speed: number;
+  size?: number;
 }

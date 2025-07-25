@@ -74,14 +74,14 @@ const Roulette: React.FC<RouletteProps & { speed: number }> = ({
     const animate = (time: number) => {
       const delta = time - lastTime;
       lastTime = time;
-      setAngle(prev => prev + delta * speed);
+      setAngle(angle + delta * speed);
       rafRef.current = requestAnimationFrame(animate);
     };
     rafRef.current = requestAnimationFrame(animate);
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [isRunning, setAngle, speed]);
+  }, [isRunning, setAngle, speed, angle]);
 
   // isRunningがfalseになった瞬間にonStopを呼ぶ
   useEffect(() => {
