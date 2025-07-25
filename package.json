@@ -12,7 +12,7 @@
     "format:check": "prettier --check .",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf docs",
-    "export": "next build && mv out docs",
+    "export": "next build && mv out docs && touch docs/.nojekyll",
     "deploy": "npm run clean && npm run export"
   },
   "dependencies": {
